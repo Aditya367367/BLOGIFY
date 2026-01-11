@@ -9,11 +9,12 @@ const BlogCard = ({ blog }) => {
       onClick={() => navigate(`/blogs/${blog._id}`)}
       className="bg-white rounded-xl shadow hover:shadow-md transition cursor-pointer"
     >
-      <img
-        src={blog.image}
-        alt={blog.title}
-        className="w-full h-48 object-cover rounded-t-xl"
-      />
+     <img
+  src={blog.image || "https://picsum.photos/600/400"}
+  alt={blog.title}
+  className="w-full h-48 object-cover rounded-t-xl"
+/>
+
 
       <div className="p-5">
         <span className="inline-block mb-2 text-xs font-semibold px-3 py-1 rounded-full bg-blue-100 text-blue-600">

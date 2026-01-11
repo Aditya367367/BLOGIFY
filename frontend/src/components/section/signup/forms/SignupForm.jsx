@@ -1,101 +1,93 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useAuth } from "../../../../context/AuthContext";
-import Logo from "../../../common/Logo";
 import InputField from "../../../common/InputField";
 import Button from "../../../common/Button";
+import Toast from "../../../common/Toast";
 
 const SignupForm = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [toast, setToast] = useState(null);
+  const [loading, setLoading] = useState(false);
   const { signup } = useAuth();
-  const navigate = useNavigate();
+
+  const showToast = (message, type) => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 3000);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
+    setLoading(true);
+
     try {
       await signup({ name, email, password });
-      navigate("/login");
+      showToast("Account created successfully!", "success");
+      console.log("Signup successful, redirecting in 2800ms");
+
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 2800);
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to sign up");
+      console.error("Signup error:", err);
+      const errorMessage = err.response?.data?.message || "Failed to sign up";
+      console.log("Showing error toast:", errorMessage);
+      showToast(errorMessage, "error");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center px-4">
-      
-     
+      {toast && <Toast {...toast} onClose={() => setToast(null)} />}
 
-      {/* Card */}
       <div className="bg-white w-full max-w-md rounded-xl shadow-lg p-8 mt-10">
         <h1 className="text-2xl font-semibold text-center">
-          Join Bloghub
+          Join Blogify Today
         </h1>
-        <p className="text-center text-gray-500 text-sm mt-1 mb-6">
-          Start your professional blog today.
-        </p>
-
-        {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-            {error}
-          </div>
-        )}
 
         <form onSubmit={handleSubmit}>
-          <InputField 
-            label="Full Name" 
-            placeholder="John Doe" 
+          <InputField
+            label="Full Name"
+            placeholder="John Doe"
             value={name}
             onChange={(e) => setName(e.target.value)}
+            required
           />
+
           <InputField
             label="Email Address"
             type="email"
             placeholder="name@company.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            required
           />
+
           <InputField
             label="Password"
             type="password"
             placeholder="Min. 8 characters"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            required
           />
 
-          <p className="text-xs text-gray-500 mb-4">
-            By signing up, you agree to our{" "}
-            <span className="text-blue-600 cursor-pointer">
-              Terms of Service
-            </span>{" "}
-            and{" "}
-            <span className="text-blue-600 cursor-pointer">
-              Privacy Policy
-            </span>.
-          </p>
-
-          <Button type="submit">Create Account</Button>
-
-          <div className="text-center text-xs text-gray-400 my-5">
-            OR CONTINUE WITH
-          </div>
+          <Button type="submit" disabled={loading}>
+            {loading ? "Creating Account..." : "Create Account"}
+          </Button>
 
           <p className="text-center text-sm mt-4">
             Already have an account?{" "}
-            <Link to="/login" className="text-blue-600 cursor-pointer">
+            <Link to="/login" className="text-blue-600">
               Log in
             </Link>
           </p>
         </form>
       </div>
-
-      {/* Footer */}
-      <footer className="mt-auto py-6 text-xs text-gray-400">
-        © 2026 Blogify Inc. All rights reserved. Aditya chauhan.
-      </footer>
     </div>
   );
 };

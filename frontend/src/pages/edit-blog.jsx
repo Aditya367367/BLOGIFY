@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { blogService } from "../services/blogService";
 import { Navbar } from "../components/layout/navbar";
 import BlogForm from "../components/section/blog/forms/BlogForm";
+import Toast from "../components/common/Toast";
 
 const EditBlogPage = () => {
   const { id } = useParams();
@@ -10,6 +11,12 @@ const EditBlogPage = () => {
   const [loading, setLoading] = useState(false);
   const [initialData, setInitialData] = useState(null);
   const [error, setError] = useState("");
+  const [toast, setToast] = useState(null);
+
+  const showToast = (message, type) => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 3000);
+  };
 
   useEffect(() => {
     fetchBlog();
@@ -22,6 +29,7 @@ const EditBlogPage = () => {
       setInitialData(data);
     } catch (err) {
       setError("Failed to load blog details");
+      showToast("Failed to load blog details", "error");
     }
   };
 
@@ -30,9 +38,15 @@ const EditBlogPage = () => {
       setLoading(true);
       setError("");
       await blogService.updateBlog(id, data);
-      navigate("/");
+      showToast("Blog updated successfully!", "success");
+      
+      setTimeout(() => {
+        navigate("/");
+      }, 2800);
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to update blog");
+      const errorMsg = err.response?.data?.message || "Failed to update blog";
+      setError(errorMsg);
+      showToast(errorMsg, "error");
     } finally {
       setLoading(false);
     }
@@ -41,11 +55,12 @@ const EditBlogPage = () => {
   return (
     <>
       <Navbar />
+      {toast && <Toast {...toast} onClose={() => setToast(null)} />}
       <div className="max-w-3xl mx-auto px-6 py-10">
         <h1 className="text-3xl font-semibold mb-8">Edit Blog</h1>
         
         {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+          <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded mb-6">
             {error}
           </div>
         )}

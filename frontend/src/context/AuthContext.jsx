@@ -22,6 +22,7 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('refreshToken', response.refreshToken);
       localStorage.setItem('user', JSON.stringify(response.user));
       setUser(response.user);
+      return response;
     } catch (error) {
       throw error;
     }
@@ -29,7 +30,13 @@ export const AuthProvider = ({ children }) => {
 
   const signup = async (data) => {
     try {
-      await authService.signup(data);
+      const response = await authService.signup(data);
+      
+      localStorage.setItem('accessToken', response.accessToken);
+      localStorage.setItem('refreshToken', response.refreshToken);
+      localStorage.setItem('user', JSON.stringify(response.user));
+      setUser(response.user);
+      return response;
     } catch (error) {
       throw error;
     }

@@ -3,22 +3,35 @@ import api from './api';
 export const blogService = {
   getAllBlogs: async (params = {}) => {
     const response = await api.get('/blogs', { params });
-    return response.data;
+    const data = response.data;
+    // Handle both old and new response formats
+    return {
+      blogs: data.blogs || data,
+      total: data.total || 0,
+      page: data.page || 1,
+      pages: data.pages || 1
+    };
   },
 
   getBlogById: async (id) => {
     const response = await api.get(`/blogs/${id}`);
-    return response.data;
+    const data = response.data;
+    // Return either data.data (new format) or the whole response (old format)
+    return data.data || data;
   },
 
   getCategories: async () => {
     const response = await api.get('/blogs/categories');
-    return response.data;
+    const data = response.data;
+    // Return either data.data (new format) or the whole response (old format)
+    return data.data || data;
   },
 
   getAuthors: async () => {
     const response = await api.get('/blogs/authors');
-    return response.data;
+    const data = response.data;
+    // Return either data.data (new format) or the whole response (old format)
+    return data.data || data;
   },
 
   createBlog: async (data) => {

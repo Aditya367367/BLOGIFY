@@ -6,6 +6,7 @@ import { blogService } from "../../../../services/blogService";
 const BlogDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+
   const [blog, setBlog] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -28,30 +29,34 @@ const BlogDetails = () => {
 
   if (loading)
     return (
-      <div className="flex justify-center items-center h-[60vh] text-gray-500">
+      <div className="flex justify-center items-center min-h-[60vh] text-gray-500">
         Loading blog...
       </div>
     );
 
   if (error)
     return (
-      <div className="flex justify-center items-center h-[60vh] text-red-500 font-medium">
+      <div className="flex justify-center items-center min-h-[60vh] text-red-500 font-medium">
         {error}
       </div>
     );
 
   if (!blog)
-    return <div className="text-center mt-20">Blog not found</div>;
+    return (
+      <div className="text-center mt-20 text-gray-500">
+        Blog not found
+      </div>
+    );
 
   return (
     <div className="bg-gray-50 min-h-screen">
-      <article className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
+      <article className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
 
         {/* Sticky Back */}
-        <div className="sticky top-0 z-10 bg-gray-50 py-4">
+        <div className="sticky top-0 z-10 bg-gray-50 py-3 sm:py-4">
           <button
             onClick={() => navigate(-1)}
-            className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium transition"
+            className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium text-sm sm:text-base transition"
           >
             <ArrowLeft size={18} />
             Back to blogs
@@ -59,28 +64,44 @@ const BlogDetails = () => {
         </div>
 
         {/* Main Card */}
-        <div className="bg-white rounded-3xl shadow-sm px-6 sm:px-10 py-8 sm:py-12">
+        <div className="bg-white rounded-2xl sm:rounded-3xl shadow-sm px-4 sm:px-8 md:px-10 py-6 sm:py-10">
 
           {/* Category */}
           {blog.category && (
-            <span className="inline-block px-4 py-1.5 rounded-full bg-blue-50 text-blue-600 text-xs font-semibold mb-6">
+            <span className="inline-block px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-blue-50 text-blue-600 text-[11px] sm:text-xs font-semibold mb-5">
               {blog.category}
             </span>
           )}
 
-          {/* Title */}
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 leading-snug mb-6">
+          {/* Title – FIXED FOR LONG TEXT */}
+          <h1
+            className="
+              text-xl
+              sm:text-2xl
+              md:text-3xl
+              lg:text-4xl
+              font-bold
+              text-gray-900
+              leading-snug
+              sm:leading-tight
+              mb-6
+              break-words
+              break-all
+              overflow-hidden
+            "
+          >
             {blog.title}
           </h1>
 
-          {/* Author Card */}
-          <div className="flex flex-wrap items-center gap-4 pb-8 border-b">
+          {/* Author */}
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4 pb-6 sm:pb-8 border-b">
             <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow">
-                <User size={18} className="text-white" />
+              <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow">
+                <User size={16} className="text-white" />
               </div>
+
               <div>
-                <p className="text-sm font-semibold text-gray-800">
+                <p className="text-sm font-semibold text-gray-800 break-words">
                   {blog.author}
                 </p>
                 <div className="flex items-center gap-2 text-xs text-gray-500">
@@ -100,7 +121,18 @@ const BlogDetails = () => {
             <img
               src={blog.image}
               alt={blog.title}
-              className="w-full h-64 sm:h-80 md:h-[420px] object-cover rounded-2xl my-10"
+              className="
+                w-full
+                h-52
+                sm:h-64
+                md:h-80
+                lg:h-[420px]
+                object-cover
+                rounded-xl
+                sm:rounded-2xl
+                my-8
+                sm:my-10
+              "
             />
           )}
 
@@ -108,9 +140,13 @@ const BlogDetails = () => {
           <div
             className="
               prose
+              prose-sm
+              sm:prose
               max-w-none
               text-gray-700
-              leading-loose
+              leading-relaxed
+              sm:leading-loose
+              break-words
             "
             dangerouslySetInnerHTML={{ __html: blog.content }}
           />
